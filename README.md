@@ -24,7 +24,7 @@
 ### 게시글 상세 페이지
 ![image](https://github.com/dorosieun-lee/Django_webpage/assets/139609650/b05ce944-6b99-437a-90e2-f4d4ea05b625)
 ![image](https://github.com/dorosieun-lee/Django_webpage/assets/139609650/380d7231-b3a9-4a32-b7f5-186cdcbe78a7)
-- 좋아요 버튼(하트버튼) 구현
+- 좋아요 버튼(하트 버튼 - 좋아요 취소는 흑백 하트 버튼) 구현
 - 댓글 작성 및 조회 구현
 - 조회수 표출
 
