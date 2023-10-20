@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+  <div class="d-flex justify-content-between">
+    <div>
+      <h1 class="mb-4">메인 페이지</h1>
+      <p>정렬 기준 :
+        <a href="{% url 'boards:index' %}">작성일</a> |
+        <a href="{% url 'boards:index_order' 'view' %}">조회수</a> |
+        <a href="{% url 'boards:index_order' 'like' %}">좋아요수</a> |
+        <a href="{% url 'boards:index_order' 'comment' %}">댓글수</a> 
+      </p>
+    </div>
+    <a style="height: 70%;" href="{% url 'boards:create' %}"><button class="btn btn-info">게시글 생성하기</button></a>
+  </div>
+  {% if boards|length == 0 %}아직 게시글이 없습니다
+  {% else %}
+  <div class='d-flex flex-row flex-wrap'>
+  {% for board in boards %}
+    <div class='card m-3' style="width: 15rem;">
+      <div class='card-body'>
+        {% comment %} <p>글번호 : {{ board.id }}</p> {% endcomment %}
+        <p>작성자 : <a href="{% url 'accounts:profile' board.user %}" style="text-decoration: none;">{{ board.user }}</a></p>
+        <p>글제목 : {{ board.title }}</p>
+        <p>(댓글: {{ board.comments.count }})</p>
+        <a class='btn btn-primary btn-sm' href="{% url 'boards:detail' board.pk %}">상세보기</a>
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock content %}

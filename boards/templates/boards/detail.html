@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div>
+  <div class="d-flex justify-content-between">
+    <h1 class="mb-4 d-inline-block">상세 페이지</h1>
+    <div class="d-inline-block">
+      <p class="d-inline-block">좋아요 개수: {{ board.like_users.all|length }}</p>
+      <form action="{% url 'boards:like' board.pk %}" method="POST" class="d-inline-block">
+        {% csrf_token %}
+        {% if request.user in board.like_users.all %}
+          <button type="submit" class='like-button'><img src="{% static 'unlike-button.png' %}" class='like-button'></button>
+        {% else %}
+          <button type="submit" class='like-button'><img src="{% static 'like-button.png' %}" class='like-button'></button>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+  <p>글 번호 : {{ board.id }}</p>
+  <p>작성자 : {{ board.user }}</p>
+  <p>글 제목 : {{ board.title }}</p>
+  <p>글 내용 : {{ board.content }}</p>
+  <p>작성 날짜 : {{ board.created_at|date:'Y/m/d [D]' }}</p>
+  <p>수정 날짜 : {{ board.updated_at|date:'Y/m/d [D]' }}</p>
+  <hr>
+  <p>조회수 : {{ board.view_count }}</p>
+  <div class="mb-5 d-flex justify-content-between">
+    <a href="{% url 'boards:index' %}"><button class="btn btn-light">메인 페이지로</button></a>
+    {% if request.user == board.user %}
+    <div class="btn-group" role="group">
+      <a href="{% url 'boards:update' board.id %}"><button class="btn btn-success btn-sm">수정하기</button></a>
+      <form action="{% url 'boards:detail' board.id%}" method='POST'>
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger btn-sm">삭제하기</button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+  {% if user.is_authenticated %}
+  <form action="{% url 'boards:comment' board.id %}" method='POST'>
+    {% csrf_token %}
+    {{ comment_form }}
+    <button class="btn btn-secondary" style="float: none;" type="submit">작성하기</button>
+  </form>
+  {% endif %}
+
+  <div class="mt-5">
+    {% if comments|length == 0 %} 댓글이 없습니다.
+    {% else %}
+      {% for comment in comments %}
+      <div class="my-3 d-flex justify-content-between">
+        <div>
+          <span>{{ comment.content }}</span>
+          <span class="mx-5">({{ comment.created_at|date:'Y/m/d [D]' }})</span>
+        </div>
+          <div>
+            {% if request.user == comment.user %}
+            <form action="{% url 'boards:comment_detail' board.id comment.id %}" method='POST'>
+              {% csrf_token %}
+              <button class="btn btn-danger btn-sm">삭제하기</button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+        <hr/>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}

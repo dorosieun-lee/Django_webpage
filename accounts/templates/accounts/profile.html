@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class='d-flex justify-content-between mb-4'>
+    <h1 class='d-inline-block'>{{ user.username }}님의 프로필 페이지</h1>
+    <div class='d-flex d-inline-block'>
+        <p class='d-inline-block my-1'>팔로잉: {{ followings|length }} / 팔로워: {{ followers|length }}</p>
+        {% if user != request.user %}
+            <form action="{% url 'accounts:follow' user.pk %}" method="POST">
+                {% csrf_token %}
+                {% if request.user in followers %}
+                    <input type="submit" value="Unfollow" class='btn btn-light mx-2'>
+                {% else %}
+                    <input type="submit" value="Follow" class='btn btn-secondary mx-2'>
+                {% endif %}
+    
+            </form>
+        {% endif %}
+    </div>
+</div>
+
+<p>회원번호: {{ user.pk }}</p>
+<p>유저이름: {{ user.username }}</p>
+<p>가입날짜: {{ user.date_joined }}</p>
+<hr>
+
+<h3>작성한 글</h3>
+
+{% for board in boards %}
+    <div class='bg-body-secondary'>
+        <p>글번호: {{ board.pk }}</p>
+        <p>글제목: <a href="{% url 'boards:detail' board.pk %}">{{ board.title }}</a></p>
+    </div>
+{% empty %}
+    <p>아직 작성한 글이 없습니다</p>
+{% endfor %}
+
+<hr>
+
+<h3>작성한 댓글</h3>
+<ul>
+{% for comment in comments %} 
+    <li>{{ comment.content }} <a href="{% url 'boards:detail' comment.board.pk %}">[해당 게시글로 이동]</a></li>
+{% empty %}
+    <p>아직 작성한 댓글이 없습니다</p>
+{% endfor %}
+</ul>
+<hr>
+
+{% if request.user == user %}
+    <h3>좋아요를 누른 글</h3>
+    <ul>
+    {% for board in like_boards %} 
+        <li><a href="{% url 'boards:detail' board.pk %}">{{ board.title }}</a></li>
+    {% empty %}
+        <p>좋아요를 누른 글이 없습니다</p>
+    {% endfor %}
+    </ul>
+    <hr>
+
+<div class='row'>
+    <div class='col-5 mx-auto py-2 bg-body-secondary rounded'>
+        <h3>팔로잉</h3>
+        <ul>
+        {% for following in followings %} 
+            <li><a href="{% url 'accounts:profile' following.username %}">{{ following.username }}</a></li>
+        {% empty %}
+            <p>내가 팔로우하는 유저가 없습니다</p>
+        {% endfor %}
+        </ul>
+    </div>
+    <div class='col-5 mx-auto py-2 bg-body-secondary rounded'>
+        <h3>팔로워</h3>
+        <ul>
+        {% for follower in followers %} 
+            <li><a href="{% url 'accounts:profile' follower.username %}">{{ follower.username }}</a></li>
+        {% empty %}
+            <p>나를 팔로우하는 유저가 없습니다</p>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+{% endblock content %}
+
